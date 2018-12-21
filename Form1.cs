@@ -34,15 +34,11 @@ namespace DVDScreenSaver {
 			timer1.Start();
 		}
 
-
-
 		private void Animate() {
 			const int speed = 3;
 
 			Point location = LogoBox.Location;
 			ref Point loc = ref location;
-			loc.X = LogoBox.Location.X;
-			loc.Y = LogoBox.Location.Y;
 
 			if(loc.Y + LogoBox.Height >= ClientSize.Height) {
 				bDown = false;
@@ -64,6 +60,7 @@ namespace DVDScreenSaver {
 			//loc.X += bRight ? speed : -speed;
 			//loc.Y += bDown ? speed : -speed;
 
+			/*Code below causes it to only hit corners. */
 			double hyppos = Math.Sqrt(Math.Pow(loc.X, 2) + Math.Pow(loc.Y, 2));
 			double nextpos = hyppos + (bRight && bDown ? speed : -speed) * 2;
 			double theta = Math.Atan((double)ClientSize.Height/ClientSize.Width);
@@ -88,7 +85,6 @@ namespace DVDScreenSaver {
 			LogoBox.Height = (int)(winsize / ratio / aspectratio);
 			LogoBox.Width = (int)(LogoBox.Height * aspectratio);
 		}
-
 
 
 		private static unsafe Bitmap ColorLogo(Color color) {
