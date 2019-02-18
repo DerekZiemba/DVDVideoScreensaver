@@ -4,21 +4,15 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace DVDScreenSaver {
-	public partial class Form1 : Form {
+	public partial class DVDScreenSaver : Form {
 
 		private enum Mode {
 			Normal,
-			Adjacent,
+			Opposite,
 			AllCorners
 		}
-		private enum Corner {
-			TopLeft,
-			TopRight,
-			BottomRight,
-			BottomLeft
-		}
 
-		public Bitmap[] Logos { get; set; }
+    private Bitmap[] Logos { get; set; }
 		private Random RNG = new Random();
 		private int logoIndex = 0;
 		private bool bRight = true;
@@ -26,7 +20,7 @@ namespace DVDScreenSaver {
 		private Mode eMode = Mode.Normal;
 
 
-		public Form1() {
+		public DVDScreenSaver() {
 			InitializeComponent();
 			Logos = new Bitmap[]{
 				ColorLogo(Color.FromArgb(190,0,255)),
@@ -40,8 +34,8 @@ namespace DVDScreenSaver {
 			ScaleLogo();
 			PlaceInRandomSpot();
 
-			ClientSizeChanged += (object obj, EventArgs args) => ScaleLogo();
-			Click += (object obj, EventArgs args) => NextMode();
+      ClientSizeChanged += HandleWindowResize;
+      Click += (object obj, EventArgs args) => NextMode();
 			timer1.Tick += (object obj, EventArgs args) => Animate();
 
 			timer1.Start();
@@ -75,8 +69,7 @@ namespace DVDScreenSaver {
 					loc.X += bRight ? speed : -speed;
 					loc.Y += bDown ? speed : -speed;
 					break;
-				case Mode.Adjacent:
-					speed = speed + (speed / 2);
+				case Mode.Opposite:
 					double hyppos = Math.Sqrt(Math.Pow(loc.X, 2) + Math.Pow(loc.Y, 2));
 					double nextpos = hyppos + (bRight && bDown ? speed : -speed) * 2;
 					double theta = Math.Atan((double)ClientSize.Height/ClientSize.Width);
@@ -86,25 +79,32 @@ namespace DVDScreenSaver {
 					loc.Y = (int)y;
 					break;
 				case Mode.AllCorners:
+          //TODO
 					break;
 
 			}
-
 
 			LogoBox.Location = loc;
 		}
 
 		private void NextMode() {
 			switch(eMode) {
-				case Mode.Normal: eMode = Mode.Adjacent; break;
-				case Mode.Adjacent: eMode = Mode.AllCorners; break;
-				case Mode.AllCorners: eMode = Mode.Normal; break;
+				case Mode.Normal:
+					eMode = Mode.Opposite;
+					break;
+				case Mode.Opposite:
+					eMode = Mode.AllCorners;
+					PlaceInRandomSpot();
+					break;
+				case Mode.AllCorners:
+					eMode = Mode.Normal;
+					break;
 			}
 		}
 
 		private void PlaceInRandomSpot() {
-			var randomX = (int) Math.Floor((RNG.NextDouble() * ClientSize.Width) + 1);
-			var randomY = (int) Math.Floor((RNG.NextDouble() * ClientSize.Height) + 1);
+			var randomX = (int) Math.Floor((RNG.NextDouble() * (ClientSize.Width - LogoBox.Width)) + 1);
+			var randomY = (int) Math.Floor((RNG.NextDouble() * (ClientSize.Height - LogoBox.Height)) + 1);
 			LogoBox.Location = new Point(randomX, randomY);
 		}
 
@@ -115,15 +115,24 @@ namespace DVDScreenSaver {
 		}
 
 		private void ScaleLogo() {
-			const double aspectratio = 2400f/1051f;
-			const int ratio =  6;
+      const int ratio = 6;
+      double aspectratio = Properties.Resources.DVDVideo.Width/ Properties.Resources.DVDVideo.Height;		
 			double winsize = Math.Sqrt(Math.Pow(ClientSize.Width, 2) + Math.Pow(ClientSize.Height, 2));
 			LogoBox.Height = (int)(winsize / ratio / aspectratio);
 			LogoBox.Width = (int)(LogoBox.Height * aspectratio);
 		}
 
+    private void HandleWindowResize(object obj, EventArgs args) {
+      ScaleLogo();
+      Point location = LogoBox.Location;
+      ref Point loc = ref location;
+      if (loc.X < 0 || loc.X + LogoBox.Width > ClientSize.Width || loc.Y < 0 || loc.Y + LogoBox.Height > ClientSize.Height) {
+        PlaceInRandomSpot();
+      }
+    }
 
-		private static unsafe Bitmap ColorLogo(Color color) {
+
+    private static unsafe Bitmap ColorLogo(Color color) {
 			Bitmap img = new Bitmap(Properties.Resources.DVDVideo);
 			BitmapData data = img.LockBits(new Rectangle(0,0,img.Width, img.Height), ImageLockMode.ReadWrite, img.PixelFormat);
 			byte* ptr = (byte*) data.Scan0;

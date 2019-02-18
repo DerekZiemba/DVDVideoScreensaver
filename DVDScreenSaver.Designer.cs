@@ -1,5 +1,5 @@
 ﻿namespace DVDScreenSaver {
-	partial class Form1 {
+	partial class DVDScreenSaver {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -52,8 +52,8 @@
 			this.BackColor = System.Drawing.SystemColors.MenuText;
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.LogoBox);
-			this.Name = "Form1";
-			this.Text = "Form1";
+			this.Name = "DVDScreenSaver";
+			this.Text = "DVDScreenSaver";
 			((System.ComponentModel.ISupportInitialize)(this.LogoBox)).EndInit();
 			this.ResumeLayout(false);
 
