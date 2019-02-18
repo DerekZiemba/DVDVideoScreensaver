@@ -6,10 +6,25 @@ using System.Windows.Forms;
 namespace DVDScreenSaver {
 	public partial class Form1 : Form {
 
+		private enum Mode {
+			Normal,
+			Adjacent,
+			AllCorners
+		}
+		private enum Corner {
+			TopLeft,
+			TopRight,
+			BottomRight,
+			BottomLeft
+		}
+
 		public Bitmap[] Logos { get; set; }
+		private Random RNG = new Random();
 		private int logoIndex = 0;
 		private bool bRight = true;
 		private bool bDown = true;
+		private Mode eMode = Mode.Normal;
+
 
 		public Form1() {
 			InitializeComponent();
@@ -23,19 +38,17 @@ namespace DVDScreenSaver {
 
 			LogoBox.Image = Logos[logoIndex];
 			ScaleLogo();
+			PlaceInRandomSpot();
+
 			ClientSizeChanged += (object obj, EventArgs args) => ScaleLogo();
-
-			//var rng = new Random();
-			//var randomX = (int) Math.Floor((rng.NextDouble() * ClientSize.Width) + 1);
-			//var randomY = (int) Math.Floor((rng.NextDouble() * ClientSize.Height) + 1);
-			//LogoBox.Location = new Point(randomX, randomY);
-
+			Click += (object obj, EventArgs args) => NextMode();
 			timer1.Tick += (object obj, EventArgs args) => Animate();
+
 			timer1.Start();
 		}
 
 		private void Animate() {
-			const int speed = 3;
+			int speed = 2;
 
 			Point location = LogoBox.Location;
 			ref Point loc = ref location;
@@ -57,19 +70,42 @@ namespace DVDScreenSaver {
 				SwitchLogo();
 			}
 
-			//loc.X += bRight ? speed : -speed;
-			//loc.Y += bDown ? speed : -speed;
+			switch(eMode) {
+				case Mode.Normal:
+					loc.X += bRight ? speed : -speed;
+					loc.Y += bDown ? speed : -speed;
+					break;
+				case Mode.Adjacent:
+					speed = speed + (speed / 2);
+					double hyppos = Math.Sqrt(Math.Pow(loc.X, 2) + Math.Pow(loc.Y, 2));
+					double nextpos = hyppos + (bRight && bDown ? speed : -speed) * 2;
+					double theta = Math.Atan((double)ClientSize.Height/ClientSize.Width);
+					double x =nextpos * Math.Cos(theta);
+					double y =nextpos * Math.Sin(theta);
+					loc.X = (int)x;
+					loc.Y = (int)y;
+					break;
+				case Mode.AllCorners:
+					break;
 
-			/*Code below causes it to only hit corners. */
-			double hyppos = Math.Sqrt(Math.Pow(loc.X, 2) + Math.Pow(loc.Y, 2));
-			double nextpos = hyppos + (bRight && bDown ? speed : -speed) * 2;
-			double theta = Math.Atan((double)ClientSize.Height/ClientSize.Width);
-			double x =nextpos * Math.Cos(theta);
-			double y =nextpos * Math.Sin(theta);
-			loc.X = (int)x;
-			loc.Y = (int)y;
+			}
+
 
 			LogoBox.Location = loc;
+		}
+
+		private void NextMode() {
+			switch(eMode) {
+				case Mode.Normal: eMode = Mode.Adjacent; break;
+				case Mode.Adjacent: eMode = Mode.AllCorners; break;
+				case Mode.AllCorners: eMode = Mode.Normal; break;
+			}
+		}
+
+		private void PlaceInRandomSpot() {
+			var randomX = (int) Math.Floor((RNG.NextDouble() * ClientSize.Width) + 1);
+			var randomY = (int) Math.Floor((RNG.NextDouble() * ClientSize.Height) + 1);
+			LogoBox.Location = new Point(randomX, randomY);
 		}
 
 		private void SwitchLogo() {
@@ -96,7 +132,7 @@ namespace DVDScreenSaver {
 				for(int i = 0; i < data.Stride; i += 4, scanPtr += 4) {
 					Color pixel = Color.FromArgb(*(scanPtr+3), *(scanPtr+2), *(scanPtr+1), *scanPtr);
 					if(pixel.R == 0 && pixel.G == 0 && pixel.B == 0 && pixel.A > 0) {
-						(*scanPtr, *(scanPtr + 1), *(scanPtr + 2), *(scanPtr + 3)) = (color.B, color.G, color.R, color.A);
+						(*scanPtr, *(scanPtr + 1), *(scanPtr + 2), *(scanPtr + 3)) = (color.B, color.G, color.R, pixel.A);
 					}
 				}
 			}
