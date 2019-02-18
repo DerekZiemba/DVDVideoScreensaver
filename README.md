@@ -1,5 +1,9 @@
 # DVDVideoScreensaver
-Joke for reddit. DVDVideo logo only hits corners and changes colors. When the app is open, click to switch modes between normal mode, always hit corner, and a mode I didn't actually bother to implement but is intended to hit all corners by randomly selecting one then making an arc to that corner if it's not directly opposite. In that mode it will do nothing right now. 
+Joke for reddit. DVDVideo logo only hits corners and changes colors. 
+How to use:
+* Click to switch modes between normal mode, always hit opposite corner, and always hit a corner.
+  *  Always hit a corner mode is intended to hit all corners by randomly selecting one then making an arc to that corner if it's not directly opposite.   However, I haven't actually bothered to implement it yet so it will do nothing right now. 
+* Press Enter to toggle full screen mode. 
 
 
 

@@ -18,6 +18,7 @@ namespace DVDScreenSaver {
     private bool bRight = true;
     private bool bDown = true;
     private Mode eMode = Mode.Normal;
+    private int nSpeed = 2;
 
     public DVDScreenSaver() {
       InitializeComponent();
@@ -33,6 +34,7 @@ namespace DVDScreenSaver {
       ScaleLogo();
       PlaceInRandomSpot();
 
+      KeyDown += HandleKeypress;
       ClientSizeChanged += HandleWindowResize;
       Click += (object obj, EventArgs args) => NextMode();
       timer1.Tick += (object obj, EventArgs args) => Animate();
@@ -41,8 +43,6 @@ namespace DVDScreenSaver {
     }
 
     private void Animate() {
-      int speed = 2;
-
       Point location = LogoBox.Location;
       ref Point loc = ref location;
 
@@ -63,7 +63,8 @@ namespace DVDScreenSaver {
         SwitchLogo();
       }
 
-      switch(eMode) {
+      int speed = nSpeed;
+      switch (eMode) {
         case Mode.Normal:
           loc.X += bRight ? speed : -speed;
           loc.Y += bDown ? speed : -speed;
@@ -128,6 +129,23 @@ namespace DVDScreenSaver {
         PlaceInRandomSpot();
       }
     }
+
+    private void HandleKeypress(object obj, KeyEventArgs args) {
+      if (args.KeyCode == Keys.F11 || args.KeyCode == Keys.Enter) {
+        if(this.FormBorderStyle == FormBorderStyle.Sizable) {
+          this.nSpeed = 3;
+          this.TopMost = true;
+          this.FormBorderStyle = FormBorderStyle.None;
+          this.WindowState = FormWindowState.Maximized;
+        } else {
+          this.nSpeed = 2;
+          this.TopMost = false;
+          this.FormBorderStyle = FormBorderStyle.Sizable;
+          this.WindowState = FormWindowState.Normal;
+        }
+      }
+    }
+
 
     private static unsafe Bitmap ColorLogo(Color color) {
       Bitmap img = new Bitmap(Properties.Resources.DVDVideo);
