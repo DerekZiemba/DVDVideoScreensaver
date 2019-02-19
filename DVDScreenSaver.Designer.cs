@@ -32,6 +32,8 @@
       // LogoBox
       // 
       this.LogoBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.LogoBox.Image = global::DVDScreenSaver.Properties.Resources.DVDVideo;
+      this.LogoBox.InitialImage = null;
       this.LogoBox.Location = new System.Drawing.Point(0, 0);
       this.LogoBox.Margin = new System.Windows.Forms.Padding(0);
       this.LogoBox.MaximumSize = new System.Drawing.Size(640, 396);

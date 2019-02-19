@@ -12,9 +12,17 @@ namespace DVDScreenSaver {
       AllCorners
     }
 
-    private Bitmap[] Logos { get; set; }
+    //private Bitmap[] Logos { get; set; }
+    private static Color[] Colors = new Color[] {
+      Color.FromArgb(190,0,255),
+      Color.FromArgb(255,0,139),
+      Color.FromArgb(255,131,0),
+      Color.FromArgb(0,38,255),
+      Color.FromArgb(255,250,0)
+    };
+
     private Random RNG = new Random();
-    private int logoIndex = 0;
+    private int logoIndex = -1;
     private bool bRight = true;
     private bool bDown = true;
     private Mode eMode = Mode.Normal;
@@ -22,15 +30,8 @@ namespace DVDScreenSaver {
 
     public DVDScreenSaver() {
       InitializeComponent();
-      Logos = new Bitmap[]{
-        ColorLogo(Color.FromArgb(190,0,255)),
-        ColorLogo(Color.FromArgb(255,0,139)),
-        ColorLogo(Color.FromArgb(255,131,0)),
-        ColorLogo(Color.FromArgb(0,38,255)),
-        ColorLogo(Color.FromArgb(255,250,0))
-      };
 
-      LogoBox.Image = Logos[logoIndex];
+      SwitchLogo();
       ScaleLogo();
       PlaceInRandomSpot();
 
@@ -110,8 +111,9 @@ namespace DVDScreenSaver {
 
     private void SwitchLogo() {
       logoIndex++;
-      logoIndex = logoIndex % Logos.Length;
-      LogoBox.Image = Logos[logoIndex];
+      logoIndex = logoIndex % Colors.Length;
+      RecolorLogo((Bitmap)LogoBox.Image, Colors[logoIndex]);
+      LogoBox.Invalidate();
     }
 
     private void ScaleLogo() {
@@ -124,10 +126,11 @@ namespace DVDScreenSaver {
 
     private void HandleWindowResize(object obj, EventArgs args) {
       ScaleLogo();
-      Point loc = LogoBox.Location;
-      if (loc.X < 0 || loc.X + LogoBox.Width > ClientSize.Width || loc.Y < 0 || loc.Y + LogoBox.Height > ClientSize.Height) {
-        PlaceInRandomSpot();
-      }
+      Point location = LogoBox.Location;
+      ref Point loc = ref location;
+      loc.X = Math.Min(Math.Max(loc.X, 0), ClientSize.Width - LogoBox.Width);
+      loc.Y = Math.Min(Math.Max(loc.Y, 0), ClientSize.Height - LogoBox.Height);
+      LogoBox.Location = loc;
     }
 
     private void HandleKeypress(object obj, KeyEventArgs args) {
@@ -182,22 +185,24 @@ namespace DVDScreenSaver {
       public byte G;
       public byte R;
       public byte A;
+      public void SetRGB(Color color) {
+        this.B = color.B;
+        this.G = color.G;
+        this.R = color.R;
+      }
     }
 
-    private static unsafe Bitmap ColorLogo(Color color) {
-      Bitmap img = new Bitmap(Properties.Resources.DVDVideo);
+    private static unsafe void RecolorLogo(Bitmap img, Color color) {
       BitmapData data = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadWrite, img.PixelFormat);
-      int length = data.Height * data.Width;
       BGRAPixel* ptr = (BGRAPixel*)data.Scan0;
-      for (var i = 0; i < length; i++, ptr++) {
-        if (ptr->A > 0) {
-          ptr->B = color.B;
-          ptr->G = color.G;
-          ptr->R = color.R;
-        }
+      for (int len = (data.Height * data.Width) - 4, i = 0; i < len; i += 4, ptr += 4) {
+        if ((ptr + 0)->A > 0) { (ptr + 0)->SetRGB(color); }
+        if ((ptr + 1)->A > 0) { (ptr + 1)->SetRGB(color); }
+        if ((ptr + 2)->A > 0) { (ptr + 2)->SetRGB(color); }
+        if ((ptr + 3)->A > 0) { (ptr + 3)->SetRGB(color); }
       }
       img.UnlockBits(data);
-      return img;
     }
+
   }
 }
