@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace DVDScreenSaver {
-  public partial class DVDScreenSaver : Form {
+  public partial class DVDScreenSaver: Form {
 
     private enum Mode {
       Normal,
@@ -36,7 +36,6 @@ namespace DVDScreenSaver {
 
       KeyDown += HandleKeypress;
       ClientSizeChanged += HandleWindowResize;
-      Click += (object obj, EventArgs args) => NextMode();
       timer1.Tick += (object obj, EventArgs args) => Animate();
 
       timer1.Start();
@@ -46,21 +45,19 @@ namespace DVDScreenSaver {
       Point location = LogoBox.Location;
       ref Point loc = ref location;
 
-      if(loc.Y + LogoBox.Height >= ClientSize.Height) {
+      if (loc.Y + LogoBox.Height > ClientSize.Height) {
         bDown = false;
         SwitchLogo();
-      }
-      if(loc.Y <= 0) {
+      } else if (loc.Y < 0) {
         bDown = true;
         SwitchLogo();
       }
-      if(loc.X + LogoBox.Width >= ClientSize.Width) {
+      if (loc.X + LogoBox.Width > ClientSize.Width) {
         bRight = false;
         SwitchLogo();
-      }
-      if(loc.X <= 0) {
+      } else if (loc.X < 0) {
         bRight = true;
-        SwitchLogo();
+        SwitchLogo(); ;
       }
 
       int speed = nSpeed;
@@ -70,11 +67,14 @@ namespace DVDScreenSaver {
           loc.Y += bDown ? speed : -speed;
           break;
         case Mode.Opposite:
+          double height = ClientSize.Height - LogoBox.Height;
+          double width = ClientSize.Width - LogoBox.Width;
+          double theta = Math.Atan(height / width);
           double hyppos = Math.Sqrt(Math.Pow(loc.X, 2) + Math.Pow(loc.Y, 2));
-          double nextpos = hyppos + (bRight && bDown ? speed : -speed) * 2;
-          double theta = Math.Atan((double)ClientSize.Height/ClientSize.Width);
-          double x = nextpos * Math.Cos(theta);
-          double y = nextpos * Math.Sin(theta);
+          double nextx = hyppos + (bRight ? speed : -speed) * 2;
+          double nexty = hyppos + (bDown ? speed : -speed) * 2;
+          double x = nextx * Math.Cos(theta);
+          double y = nexty * Math.Sin(theta);
           loc.X = (int)x;
           loc.Y = (int)y;
           break;
@@ -88,12 +88,12 @@ namespace DVDScreenSaver {
     }
 
     private void NextMode() {
-      switch(eMode) {
+      switch (eMode) {
         case Mode.Normal:
           eMode = Mode.Opposite;
           break;
         case Mode.Opposite:
-          eMode = Mode.AllCorners;
+          eMode = Mode.Normal;
           PlaceInRandomSpot();
           break;
         case Mode.AllCorners:
@@ -103,8 +103,8 @@ namespace DVDScreenSaver {
     }
 
     private void PlaceInRandomSpot() {
-      var randomX = (int) Math.Floor((RNG.NextDouble() * (ClientSize.Width - LogoBox.Width)) + 1);
-      var randomY = (int) Math.Floor((RNG.NextDouble() * (ClientSize.Height - LogoBox.Height)) + 1);
+      var randomX = (int)Math.Floor((RNG.NextDouble() * (ClientSize.Width - LogoBox.Width)) + 1);
+      var randomY = (int)Math.Floor((RNG.NextDouble() * (ClientSize.Height - LogoBox.Height)) + 1);
       LogoBox.Location = new Point(randomX, randomY);
     }
 
@@ -115,10 +115,10 @@ namespace DVDScreenSaver {
     }
 
     private void ScaleLogo() {
-      const int ratio = 6;
-      double aspectratio = Properties.Resources.DVDVideo.Width/ Properties.Resources.DVDVideo.Height;		
+      const int scale = 6;
+      double aspectratio = Properties.Resources.DVDVideo.Width / Properties.Resources.DVDVideo.Height;
       double winsize = Math.Sqrt(Math.Pow(ClientSize.Width, 2) + Math.Pow(ClientSize.Height, 2));
-      LogoBox.Height = (int)(winsize / ratio / aspectratio);
+      LogoBox.Height = (int)(winsize / scale / aspectratio);
       LogoBox.Width = (int)(LogoBox.Height * aspectratio);
     }
 
@@ -131,33 +131,69 @@ namespace DVDScreenSaver {
     }
 
     private void HandleKeypress(object obj, KeyEventArgs args) {
-      if (args.KeyCode == Keys.F11 || args.KeyCode == Keys.Enter) {
-        if(this.FormBorderStyle == FormBorderStyle.Sizable) {
-          this.nSpeed = 3;
-          this.TopMost = true;
-          this.FormBorderStyle = FormBorderStyle.None;
-          this.WindowState = FormWindowState.Maximized;
-        } else {
-          this.nSpeed = 2;
-          this.TopMost = false;
-          this.FormBorderStyle = FormBorderStyle.Sizable;
-          this.WindowState = FormWindowState.Normal;
-        }
+      switch (args.KeyCode) {
+        case Keys.F11:
+        case Keys.Enter:
+          if (this.FormBorderStyle == FormBorderStyle.Sizable) {
+            this.nSpeed = 3;
+            this.TopMost = true;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+          } else {
+            this.nSpeed = 2;
+            this.TopMost = false;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+            this.WindowState = FormWindowState.Normal;
+          }
+          break;
+        case Keys.Space:
+          NextMode();
+          break;
+        case Keys.Left:
+          bRight = false;
+          break;
+        case Keys.Right:
+          bRight = true;
+          break;
+        case Keys.Up:
+          bDown = false;
+          break;
+        case Keys.Down:
+          bDown = true;
+          break;
+        case Keys.NumPad0:
+        case Keys.NumPad1:
+        case Keys.NumPad2:
+        case Keys.NumPad3:
+        case Keys.NumPad4:
+        case Keys.NumPad5:
+        case Keys.NumPad6:
+        case Keys.NumPad7:
+        case Keys.NumPad8:
+        case Keys.NumPad9:
+          nSpeed = args.KeyCode - Keys.NumPad0;
+          break;
+
       }
     }
 
+    private struct BGRAPixel {
+      public byte B;
+      public byte G;
+      public byte R;
+      public byte A;
+    }
 
     private static unsafe Bitmap ColorLogo(Color color) {
       Bitmap img = new Bitmap(Properties.Resources.DVDVideo);
-      BitmapData data = img.LockBits(new Rectangle(0,0,img.Width, img.Height), ImageLockMode.ReadWrite, img.PixelFormat);
-      byte* ptr = (byte*) data.Scan0;
-      for(int j = 0; j < data.Height; j++) {
-        byte* scanPtr = ptr + (j * data.Stride);
-        for(int i = 0; i < data.Stride; i += 4, scanPtr += 4) {
-          Color pixel = Color.FromArgb(*(scanPtr+3), *(scanPtr+2), *(scanPtr+1), *scanPtr);
-          if(pixel.R == 0 && pixel.G == 0 && pixel.B == 0 && pixel.A > 0) {
-            (*scanPtr, *(scanPtr + 1), *(scanPtr + 2), *(scanPtr + 3)) = (color.B, color.G, color.R, pixel.A);
-          }
+      BitmapData data = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadWrite, img.PixelFormat);
+      int length = data.Height * data.Width;
+      BGRAPixel* ptr = (BGRAPixel*)data.Scan0;
+      for (var i = 0; i < length; i++, ptr++) {
+        if (ptr->A > 0) {
+          ptr->B = color.B;
+          ptr->G = color.G;
+          ptr->R = color.R;
         }
       }
       img.UnlockBits(data);
