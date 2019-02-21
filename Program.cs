@@ -10,6 +10,7 @@ using System.Windows.Forms;
 namespace DVDScreenSaver {
 	static class Program {
 
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -17,7 +18,9 @@ namespace DVDScreenSaver {
 		static void Main() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new DVDScreenSaver());
+      System.Diagnostics.Process myProcess = System.Diagnostics.Process.GetCurrentProcess();
+      myProcess.PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+      Application.Run(new DVDScreenSaver());
 		}
 
 

@@ -46,7 +46,7 @@
       // 
       // timer1
       // 
-      this.timer1.Interval = 16;
+      this.timer1.Interval = 1;
       // 
       // DVDScreenSaver
       // 

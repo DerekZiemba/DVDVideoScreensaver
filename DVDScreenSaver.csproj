@@ -57,6 +57,7 @@
     <Compile Include="DVDScreenSaver.Designer.cs">
       <DependentUpon>DVDScreenSaver.cs</DependentUpon>
     </Compile>
+    <Compile Include="MovingLogo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DVDScreenSaver.resx">
