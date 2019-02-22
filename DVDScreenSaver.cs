@@ -11,7 +11,7 @@ namespace DVDScreenSaver {
 
     public DVDScreenSaver() {
       InitializeComponent();
-      //this.DoubleBuffered = true;
+      this.DoubleBuffered = true;
 
       Logo = new MovingLogo(
         Properties.Resources.DVDVideo,
@@ -30,13 +30,10 @@ namespace DVDScreenSaver {
         ref var rect = ref logo.Rect;
         LogoBox.SetBounds((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
       };
+
       Logo.OnRedraw += (MovingLogo logo) => {
         LogoBox.Invalidate();
       };
-
-      Logo.NextColor();
-      Logo.Rescale(new RectDbl(0, 0, ClientSize.Width, ClientSize.Height), LogoScale);
-      Logo.PlaceInRandomSpot();
       
       ClientSizeChanged += (object obj, EventArgs args) => {
         Logo.Rescale(new RectDbl(0, 0, ClientSize.Width, ClientSize.Height), LogoScale);
@@ -47,6 +44,12 @@ namespace DVDScreenSaver {
       timer1.Tick += (object obj, EventArgs args) => {
         Logo.Animate();
       };
+
+
+      Logo.NextColor();
+      Logo.Rescale(new RectDbl(0, 0, ClientSize.Width, ClientSize.Height), LogoScale);
+      Logo.PlaceInRandomSpot();
+
       timer1.Start();
     }
 

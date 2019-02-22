@@ -108,8 +108,6 @@ namespace DVDScreenSaver {
           break;
       }
 
-      Console.Out.WriteLine(_watch.ElapsedMilliseconds);
-
       double step = _watch.ElapsedMilliseconds / 10;
       double moveX = (x - origX) * step;
       double moveY = (y - origY) * step;
