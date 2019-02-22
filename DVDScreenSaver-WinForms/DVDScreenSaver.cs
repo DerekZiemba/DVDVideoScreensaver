@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using System.IO;
+using System.Reflection;
+
 
 namespace DVDScreenSaver {
   public partial class DVDScreenSaver: Form {
@@ -14,7 +17,7 @@ namespace DVDScreenSaver {
       this.DoubleBuffered = true;
 
       Logo = new MovingLogo(
-        Properties.Resources.DVDVideo,
+        LogoLoader.GetLogo(),
         new Color[] {
           Color.FromArgb(190,0,255),
           Color.FromArgb(255,0,139),
@@ -54,21 +57,6 @@ namespace DVDScreenSaver {
     }
 
 
-    private void NextMode() {
-      switch (Logo.Mode) {
-        case MoveMode.Normal:
-          Logo.Mode = MoveMode.Opposite;
-          break;
-        case MoveMode.Opposite:
-          Logo.Mode = MoveMode.Normal;
-          Logo.PlaceInRandomSpot();
-          break;
-        case MoveMode.AllCorners:
-          Logo.Mode = MoveMode.Normal;
-          break;
-      }
-    }
-
     private void HandleKeypress(object obj, KeyEventArgs args) {
       switch (args.KeyCode) {
         case Keys.F11:
@@ -86,7 +74,7 @@ namespace DVDScreenSaver {
           }
           break;
         case Keys.Space:
-          NextMode();
+          Logo.NextMode();
           break;
         case Keys.Left:
           Logo.MoveRight = false;
@@ -115,6 +103,7 @@ namespace DVDScreenSaver {
 
       }
     }
+
 
 
 

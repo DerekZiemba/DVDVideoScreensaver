@@ -1,11 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+
+#if WINFORMS
+using BitMap = System.Drawing.Bitmap;
+using Color = System.Drawing.Color;
+#elif WPF
+using BitMap = System.Windows.Media.Imaging.WriteableBitmap;
+using Color = System.Windows.Media.Color;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+#endif
+
+
 
 namespace DVDScreenSaver {
 
@@ -33,6 +40,8 @@ namespace DVDScreenSaver {
     AllCorners
   }
 
+
+
   public class MovingLogo {
 
     public event Action<MovingLogo> OnNewPosition;
@@ -46,7 +55,7 @@ namespace DVDScreenSaver {
     private double _scale;
 
 
-    public Bitmap Image;
+    public BitMap Image;
     public Color[] Colors;
     public MoveMode Mode;
     public bool MoveRight = true;
@@ -57,7 +66,7 @@ namespace DVDScreenSaver {
     public ref RectDbl Bounds => ref this._bounds;
 
 
-    public MovingLogo(Bitmap image, Color[] colors) {
+    public MovingLogo(BitMap image, Color[] colors) {
       this.Image = image;
       this.Colors = colors;
       this.Rect = new RectDbl(0, 0, image.Width, image.Height);
@@ -129,8 +138,23 @@ namespace DVDScreenSaver {
       Animate();
     }
 
+    public void NextMode() {
+      switch (Mode) {
+        case MoveMode.Normal:
+          Mode = MoveMode.Opposite;
+          break;
+        case MoveMode.Opposite:
+          Mode = MoveMode.Normal;
+          PlaceInRandomSpot();
+          break;
+        case MoveMode.AllCorners:
+          Mode = MoveMode.Normal;
+          break;
+      }
+    }
+
     public void NextColor() {
-      RecolorLogo(Image, Colors[_colorIdx = ++_colorIdx % Colors.Length]);
+      LogoLoader.RecolorLogo(Image, Colors[_colorIdx = ++_colorIdx % Colors.Length]);
       OnRedraw(this);
     }
 
@@ -140,33 +164,6 @@ namespace DVDScreenSaver {
       Animate();
     }
 
-
-    private struct BGRAPixel {
-      public byte B;
-      public byte G;
-      public byte R;
-      public byte A;
-      public void SetRGB(Color color) {
-        this.B = color.B;
-        this.G = color.G;
-        this.R = color.R;
-      }
-    }
-    private static unsafe void RecolorLogo(Bitmap img, Color color) {
-      BitmapData data = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadWrite, img.PixelFormat);
-      BGRAPixel* ptr = (BGRAPixel*)data.Scan0;
-      for (int len = (data.Height * data.Width) - 8, i = 0; i < len; i += 8, ptr += 8) {
-        if ((ptr + 0)->A > 0) { (ptr + 0)->SetRGB(color); }
-        if ((ptr + 1)->A > 0) { (ptr + 1)->SetRGB(color); }
-        if ((ptr + 2)->A > 0) { (ptr + 2)->SetRGB(color); }
-        if ((ptr + 3)->A > 0) { (ptr + 3)->SetRGB(color); }
-        if ((ptr + 4)->A > 0) { (ptr + 4)->SetRGB(color); }
-        if ((ptr + 5)->A > 0) { (ptr + 5)->SetRGB(color); }
-        if ((ptr + 6)->A > 0) { (ptr + 6)->SetRGB(color); }
-        if ((ptr + 7)->A > 0) { (ptr + 7)->SetRGB(color); }
-      }
-      img.UnlockBits(data);
-    }
 
   }
 }
