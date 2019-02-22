@@ -69,7 +69,7 @@ namespace DVDScreenSaver {
       double origX = Rect.X, origY = Rect.Y;
       double x = origX, y = origY;
       bool bOutOfBounds = false;
-      
+
       if (Rect.Right >= Bounds.Right) {
         MoveRight = false;
         bOutOfBounds = true;
@@ -117,7 +117,7 @@ namespace DVDScreenSaver {
       OnNewPosition(this);
       this._watch.Restart();
     }
-    
+
     public void Rescale(RectDbl bounds, double scale) {
       this._bounds = bounds;
       this._scale = scale;
@@ -128,7 +128,7 @@ namespace DVDScreenSaver {
       Rect.Y = Math.Min(Math.Max(Rect.Y, 0), Bounds.Height - Rect.Height);
       Animate();
     }
-    
+
     public void NextColor() {
       RecolorLogo(Image, Colors[_colorIdx = ++_colorIdx % Colors.Length]);
       OnRedraw(this);

@@ -8,10 +8,11 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>DVDScreenSaver</RootNamespace>
     <AssemblyName>DVDScreenSaver</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -51,16 +52,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DVDScreenSaver.cs">
+    <Compile Include="src\DVDScreenSaver.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DVDScreenSaver.Designer.cs">
+    <Compile Include="src\DVDScreenSaver.Designer.cs">
       <DependentUpon>DVDScreenSaver.cs</DependentUpon>
     </Compile>
-    <Compile Include="MovingLogo.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="src\MovingLogo.cs" />
+    <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="DVDScreenSaver.resx">
+    <EmbeddedResource Include="src\DVDScreenSaver.resx">
       <DependentUpon>DVDScreenSaver.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -84,10 +85,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="src\App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Properties\DVDVideo.png" />
+    <Content Include="src\DVDVideo1051.png" />
+    <Content Include="src\DVDVideo360.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

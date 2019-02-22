@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DVDScreenSaver", "DVDScreenSaver.csproj", "{741713C9-A586-49A3-9968-6B72F44DA814}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DVDScreenSaver", "WinForms\DVDScreenSaver.csproj", "{741713C9-A586-49A3-9968-6B72F44DA814}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
