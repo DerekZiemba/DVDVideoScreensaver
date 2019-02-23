@@ -12,7 +12,7 @@ How to use:
 ![DVD Logo](https://i.imgur.com/8uy0IR0.gif)
 
 # Multiple versions: Winforms and WPF
-There is some jankiness with the animation so I figured I'd try it in WPF. Still janky. If anyone knows how to do smooth animations in either of these frameworks let me know. Otherwise I'm considering going to dotnetcore and using OpenGL. 
+There is some jankiness with the animation so I figured I'd try it in WPF. Still janky, but there is a noticable improvement. If anyone knows how to do smooth animations in either of these frameworks let me know. Otherwise I'm considering going to dotnetcore and using OpenGL. 
 * Both versions share the same code and resources under [SharedItems](https://github.com/DerekZiemba/DVDVideoScreensaver/tree/master/SharedItems). 
 * This makes fo ran interesting resources consumed comparison:
 ![resource comparison](https://i.imgur.com/3rxEaDI.png)
