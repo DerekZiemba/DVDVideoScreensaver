@@ -23,7 +23,7 @@ namespace DVDScreenSaver {
 
     public static BitMap GetLogo() {
       var assembly = Assembly.GetExecutingAssembly();
-      var resourceName = "DVDVideo360.png";
+      var resourceName = "DVDVideo200.png";
       var allResources = assembly.GetManifestResourceNames();
       string fullName = allResources.Single(str => str.EndsWith(resourceName));
 #if WINFORMS

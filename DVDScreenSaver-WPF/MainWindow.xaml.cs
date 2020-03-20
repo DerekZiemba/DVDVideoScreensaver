@@ -73,7 +73,7 @@ namespace DVDScreenSaver_WPF {
       Logo.Rescale(new RectDbl(0, 0, canvas.ActualWidth, canvas.ActualHeight), LogoScale);
       Logo.PlaceInRandomSpot();
 
-      timer1.Interval = new TimeSpan(0, 0, 0, 0, 10);
+      timer1.Interval = new TimeSpan(0, 0, 0, 0, 8);
       timer1.Start();
 
     }
@@ -83,15 +83,14 @@ namespace DVDScreenSaver_WPF {
         case Key.F11:
         case Key.Enter:
           if (this.WindowStyle != WindowStyle.None) {
-            Logo.Speed = 3;
+            Logo.Speed = 1.33;
             this.Topmost = true;
             this.WindowStyle = WindowStyle.None;
             this.WindowState = WindowState.Maximized;
           } else {
-            Logo.Speed = 2;
+            Logo.Speed = 1;
             this.Topmost = false;
             this.WindowStyle = WindowStyle.SingleBorderWindow;
-            this.WindowState = WindowState.Normal;
           }
           break;
         case Key.Space:
@@ -119,7 +118,7 @@ namespace DVDScreenSaver_WPF {
         case Key.NumPad7:
         case Key.NumPad8:
         case Key.NumPad9:
-          Logo.Speed = args.Key - Key.NumPad0;
+          Logo.Speed = (args.Key - Key.NumPad0) * .33;
           break;
 
       }

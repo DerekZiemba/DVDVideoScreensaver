@@ -18,8 +18,6 @@ namespace DVDScreenSaver {
     static void Main() {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
-      System.Diagnostics.Process myProcess = System.Diagnostics.Process.GetCurrentProcess();
-      myProcess.PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
       Application.Run(new DVDScreenSaver());
     }
 

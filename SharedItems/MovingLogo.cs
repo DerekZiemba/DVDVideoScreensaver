@@ -60,7 +60,7 @@ namespace DVDScreenSaver {
     public MoveMode Mode;
     public bool MoveRight = true;
     public bool MoveDown = true;
-    public double Speed = 2;
+    public double Speed = 1;
 
     public ref RectDbl Rect => ref this._rect;
     public ref RectDbl Bounds => ref this._bounds;
@@ -69,7 +69,7 @@ namespace DVDScreenSaver {
     public MovingLogo(BitMap image, Color[] colors) {
       this.Image = image;
       this.Colors = colors;
-      this.Rect = new RectDbl(0, 0, image.Width, image.Height);
+      this.Rect = new RectDbl(0, -10, image.Width, image.Height);
       this._watch = Stopwatch.StartNew();
     }
 
@@ -117,9 +117,15 @@ namespace DVDScreenSaver {
           break;
       }
 
-      double step = _watch.ElapsedMilliseconds / 10;
+      double step = _watch.ElapsedMilliseconds / 8;
+CALC_MOVE_AGAIN:
       double moveX = (x - origX) * step;
       double moveY = (y - origY) * step;
+      //if(moveX == 0 && moveY == 0) {
+      //  x *= 2;
+      //  y *= 2;
+      //  goto CALC_MOVE_AGAIN;
+      //}
       Rect.X += moveX;
       Rect.Y += moveY;
 

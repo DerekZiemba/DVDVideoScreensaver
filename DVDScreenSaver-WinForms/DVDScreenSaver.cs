@@ -14,7 +14,6 @@ namespace DVDScreenSaver {
 
     public DVDScreenSaver() {
       InitializeComponent();
-      this.DoubleBuffered = true;
 
       Logo = new MovingLogo(
         LogoLoader.GetLogo(),
@@ -53,6 +52,7 @@ namespace DVDScreenSaver {
       Logo.Rescale(new RectDbl(0, 0, ClientSize.Width, ClientSize.Height), LogoScale);
       Logo.PlaceInRandomSpot();
 
+      timer1.Interval = 8;
       timer1.Start();
     }
 
@@ -62,15 +62,14 @@ namespace DVDScreenSaver {
         case Keys.F11:
         case Keys.Enter:
           if (this.FormBorderStyle == FormBorderStyle.Sizable) {
-            Logo.Speed = 3;
+            Logo.Speed = 1.33;
             this.TopMost = true;
             this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
           } else {
-            Logo.Speed = 2;
+            Logo.Speed = 1;
             this.TopMost = false;
             this.FormBorderStyle = FormBorderStyle.Sizable;
-            this.WindowState = FormWindowState.Normal;
           }
           break;
         case Keys.Space:
@@ -98,7 +97,7 @@ namespace DVDScreenSaver {
         case Keys.NumPad7:
         case Keys.NumPad8:
         case Keys.NumPad9:
-          Logo.Speed = args.KeyCode - Keys.NumPad0;
+          Logo.Speed = (args.KeyCode - Keys.NumPad0) * .33;
           break;
 
       }

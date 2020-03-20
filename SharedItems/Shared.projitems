@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)DVDVideo1051.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)DVDVideo360.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)DVDVideo200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)DVDVideo360.png" />
   </ItemGroup>
 </Project>

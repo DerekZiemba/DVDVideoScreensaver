@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DVDScreenSaver_WPF"
         mc:Ignorable="d"
-        Title="DVDScreenSaver" Height="450" Width="800">
+        Title="DVDScreenSaver-WPF" Height="495" Width="850">
   <Canvas Name="canvas" Background="Black">
     <Rectangle x:Name="LogoBox" MinWidth="80" MinHeight="49">
       <Rectangle.Fill>
